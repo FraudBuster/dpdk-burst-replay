@@ -33,5 +33,5 @@ dpdk_replay_SOURCES	=	main.c \
 						pcap.c \
 						utils.c
 
-dpdk_replay_CFLAGS	=	$(CFLAGS) -I$(top_srcdir)/include -I/usr/include/dpdk -mssse3
+dpdk_replay_CFLAGS	=	$(CFLAGS) -I$(top_srcdir)/include -I/usr/include/dpdk
 dpdk_replay_LDFLAGS	=	$(LDFLAGS) -pthread -lnuma -ldpdk -lm
