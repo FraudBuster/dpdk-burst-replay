@@ -41,6 +41,7 @@ Example:
 * Add an option to select multiple pcap files at once.
 * Be able to send dumps simultaneously on both numacores.
 * Split big pkts into multiple mbufs.
+* Add a Python module to facilitate scripting (something like what does scapy for tcpreplay sendpfast func).
 
 ## BSD LICENCE
 
