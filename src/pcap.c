@@ -41,7 +41,6 @@
 #include <rte_malloc.h>
 #include <rte_mbuf.h>
 
-#include "config.h"
 #include "main.h"
 
 #define MAX_PKT_SZ (1024*64) /* 64ko */

@@ -36,7 +36,6 @@
 #include <rte_version.h>
 #include <rte_ethdev.h>
 
-#include "config.h"
 #include "main.h"
 
 static struct rte_eth_conf ethconf = {

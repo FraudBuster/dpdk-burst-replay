@@ -35,7 +35,6 @@
 #include <numa.h>
 #include <unistd.h>
 
-#include "config.h"
 #include "main.h"
 
 static int find_cpus_to_use(const struct cmd_opts* opts, struct cpus_bindings* cpus)
