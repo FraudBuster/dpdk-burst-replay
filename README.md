@@ -17,13 +17,13 @@ To do so, the pcap files will be cached on hugepages before being sent through D
 
 NB: libpcap is not required, as dpdk-replay process pcap files manually.
 
-### Compiling it
+### Compiling and installing it
 
-> autoreconf -i && ./configure [--enable-debug] && make
+> autoreconf -i && ./configure [--enable-debug] && make && sudo make install
 
-### Installing it
+OR:
 
-> sudo make install
+> RTE_SDK=<RTE_SDK_PATH> make -f DPDK_Makefile && sudo cp build/dpdk-replay /usr/bin
 
 ### Launching it
 
