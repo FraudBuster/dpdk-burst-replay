@@ -144,7 +144,6 @@ int preload_pcap(const struct cmd_opts* opts, struct pcap_ctx* pcap)
         } else if (nb_read != sizeof(pcap_rechdr)) {
             printf("\nread pkt hdr misssize: %lu / %lu\n",
                    nb_read, sizeof(pcap_rechdr));
-            ret = EIO;
             goto preload_pcapError;
         }
         total_read += nb_read;
@@ -168,7 +167,6 @@ int preload_pcap(const struct cmd_opts* opts, struct pcap_ctx* pcap)
         } else if (nb_read != pcap_rechdr.incl_len) {
             printf("\nread pkt %i payload misssize: %u / %u\n", cpt,
                    (unsigned int)nb_read, pcap_rechdr.incl_len);
-            ret = EIO;
             goto preload_pcapError;
         }
         total_read += nb_read;
