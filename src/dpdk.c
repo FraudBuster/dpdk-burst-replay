@@ -218,7 +218,7 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
         return (1);
     }
 
-    printf("-> Create mempool of %u mbufs of %u octs.\n",
+    printf("-> Create mempool of %lu mbufs of %lu octs.\n",
            dpdk->nb_mbuf, dpdk->mbuf_sz);
     dpdk->pktmbuf_pool = rte_mempool_create("dpdk_replay_mempool",
                                             dpdk->nb_mbuf,

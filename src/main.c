@@ -144,12 +144,12 @@ int check_needed_memory(const struct cmd_opts* opts, const struct pcap_ctx* pcap
     puts("Needed paket allocation size = "
          "(size of MBUF) + (size of biggest pcap packet), "
          "rounded up to the next multiple of an integer.");
-    printf("(%lu + %u) + ((%lu + %u) %% %lu) = %u\n",
+    printf("(%lu + %u) + ((%lu + %u) %% %lu) = %lu\n",
            sizeof(struct rte_mbuf), pcap->max_pkt_sz,
            sizeof(struct rte_mbuf), pcap->max_pkt_sz,
            sizeof(int), dpdk->mbuf_sz);
 #endif /* DEBUG */
-    printf("-> Needed MBUF size: %u\n", dpdk->mbuf_sz);
+    printf("-> Needed MBUF size: %lu\n", dpdk->mbuf_sz);
 
     /* # CALCULATE THE NEEDED NUMBER OF MBUFS */
     /* For number of pkts to be allocated on the mempool, DPDK says: */
@@ -160,13 +160,13 @@ int check_needed_memory(const struct cmd_opts* opts, const struct pcap_ctx* pcap
          "(nb pkts * nb ports)");
 #endif /* DEBUG */
     dpdk->nb_mbuf = get_next_power_of_2(pcap->nb_pkts * opts->nb_pcicards) - 1;
-    printf("-> Needed number of MBUFS: %u\n", dpdk->nb_mbuf);
+    printf("-> Needed number of MBUFS: %lu\n", dpdk->nb_mbuf);
 
     /* # CALCULATE THE TOTAL NEEDED MEMORY SIZE  */
     needed_mem = dpdk->mbuf_sz * dpdk->nb_mbuf;
 #ifdef DEBUG
     puts("Needed memory = (needed mbuf size) * (number of needed mbuf).");
-    printf("%u * %u = %.0f bytes\n", dpdk->mbuf_sz, dpdk->nb_mbuf, needed_mem);
+    printf("%lu * %lu = %.0f bytes\n", dpdk->mbuf_sz, dpdk->nb_mbuf, needed_mem);
 #endif /* DEBUG */
     hsize = nb_oct_to_human_str(needed_mem);
     if (!hsize)
@@ -179,7 +179,7 @@ int check_needed_memory(const struct cmd_opts* opts, const struct pcap_ctx* pcap
         dpdk->pool_sz = needed_mem / (float)(1024*1024*1024) + 1;
     else
         dpdk->pool_sz = needed_mem / (1024*1024*1024);
-    printf("-> Needed Hugepages of 1 Go = %i\n", dpdk->pool_sz);
+    printf("-> Needed Hugepages of 1 Go = %lu\n", dpdk->pool_sz);
     return (0);
 }
 

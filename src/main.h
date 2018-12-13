@@ -55,9 +55,9 @@ struct                  pcap_cache {
 
 /* struct to store dpdk context */
 struct                  dpdk_ctx {
-    unsigned int        nb_mbuf; /* number of needed mbuf (see main.c) */
-    unsigned int        mbuf_sz; /* wanted/needed size for the mbuf (see main.c) */
-    unsigned int        pool_sz; /* mempool wanted/needed size (see main.c) */
+    unsigned long       nb_mbuf; /* number of needed mbuf (see main.c) */
+    unsigned long       mbuf_sz; /* wanted/needed size for the mbuf (see main.c) */
+    unsigned long       pool_sz; /* mempool wanted/needed size (see main.c) */
     struct rte_mempool* pktmbuf_pool;
 
     /* pcap file caches */
