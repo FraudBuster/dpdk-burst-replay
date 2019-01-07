@@ -52,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'dpdk-burst-replay'
-copyright = '2019, Jonathan Ribas'
+copyright = '2019, Jonathan Ribas, FraudBuster'
 author = 'Jonathan Ribas'
 
 # The version info for the project you're documenting, acts as replacement for
