@@ -8,5 +8,8 @@ dpdk_replay_SOURCES	=	main.c \
 						pcap.c \
 						utils.c
 
-dpdk_replay_CFLAGS	=	$(CFLAGS) -I/usr/include/dpdk -march=native
-dpdk_replay_LDFLAGS	=	$(LDFLAGS) -pthread -lnuma -ldpdk -lm
+dpdk_replay_CFLAGS	:=	$(CFLAGS) -I/usr/include/dpdk -march=native -I$(includedir)
+dpdk_replay_LDFLAGS	:=	$(LDFLAGS) -L$(libdir) -pthread -lnuma -lm -ldl \
+						-Wl,--whole-archive -Wl,--start-group \
+						-ldpdk \
+						-Wl,--end-group -Wl,--no-whole-archive
