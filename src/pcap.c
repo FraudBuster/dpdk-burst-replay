@@ -235,7 +235,7 @@ int load_pcap(const struct cmd_opts* opts, struct pcap_ctx* pcap,
     if (ret)
         goto load_pcapError;
 
-    printf("-> Will cache %i pkts.\n", pcap->nb_pkts);
+    printf("-> Will cache %i pkts on %i caches.\n", pcap->nb_pkts, cpus->nb_needed_cpus);
     for (; cpt < pcap->nb_pkts; cpt++) {
         /* get packet pcap header */
         nb_read = read(pcap->fd, &pcap_rechdr, sizeof(pcap_rechdr));
@@ -286,7 +286,8 @@ int load_pcap(const struct cmd_opts* opts, struct pcap_ctx* pcap,
 load_pcapError:
     percent = 100 * cpt / pcap->nb_pkts;
     printf("%sfile read at %02.2f%%\n", (ret ? "\n" : "\r"), percent);
-    printf("read %u pkts (for a total of %li bytes).\n", cpt, total_read);
+    if (ret)
+        printf("read %u pkts (for a total of %li bytes).\n", cpt, total_read);
     dpdk->pcap_sz = total_read;
     close(pcap->fd);
     pcap->fd = 0;

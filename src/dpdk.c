@@ -11,6 +11,7 @@
 /* DPDK includes */
 #include <rte_version.h>
 #include <rte_ethdev.h>
+#include <rte_log.h>
 
 #include "main.h"
 
@@ -183,6 +184,8 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
     if (!opts || !cpus || !dpdk)
         return (EINVAL);
 
+    rte_log_set_global_level(RTE_LOG_ERR);
+
     /* craft an eal arg list */
     eal_args = fill_eal_args(opts, cpus, dpdk, &eal_args_ac);
     if (!eal_args) {
@@ -292,7 +295,9 @@ int tx_thread(void* thread_ctx)
     ctx = (struct thread_ctx*)thread_ctx;
     thread_id = ctx->tx_port_id;
     mbuf = ctx->pcap_cache->mbufs;
+#ifdef DEBUG
     printf("Starting thread %i.\n", thread_id);
+#endif
 
     /* init semaphore to wait to start the burst */
     ret = sem_wait(ctx->sem);
@@ -357,7 +362,9 @@ int tx_thread(void* thread_ctx)
         return (errno);
     }
     ctx->duration = timespec_diff_to_double(start, end);
+#ifdef DEBUG
     printf("Exiting thread %i properly.\n", thread_id);
+#endif /* DEBUG */
     return (0);
 }
 
@@ -376,7 +383,7 @@ int process_result_stats(const struct cpus_bindings* cpus,
 
     total_pps = total_bitrate = 0;
     total_drop = 0;
-    puts("\nRESULTS :");
+    puts("RESULTS :");
     for (i = 0; i < cpus->nb_needed_cpus; i++) {
         total_pkt_sent = (ctx[i].nb_pkt * opts->nbruns) - ctx[i].total_drop;
         total_pkt_sent_sz = (dpdk->pcap_sz * opts->nbruns) - ctx[i].total_drop_sz;

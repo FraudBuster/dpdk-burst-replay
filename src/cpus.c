@@ -28,17 +28,23 @@ static int find_cpus_to_use(const struct cmd_opts* opts, struct cpus_bindings* c
         printf("%s: malloc failed.\n", __FUNCTION__);
         return (ENOMEM);
     }
+#ifdef DEBUG
     printf("CPU cores to use:");
+#endif /* DEBUG */
     for (i = 0, cpu_cpt = 0; i < cpus->nb_available_cpus; i++) {
         /* be sure that we get cores on the wanted numa */
         if (cpus->numacore == numa_node_of_cpu(i)) {
             cpus->cpus_to_use[cpu_cpt++] = i;
+#ifdef DEBUG
             printf(" %i", i);
+#endif /* DEBUG */
             if (cpu_cpt == cpus->nb_needed_cpus + 1) /* +1 to keep the first as fake master */
                 break;
         } else cpus->numacores = 2;
     }
+#ifdef DEBUG
     putchar('\n');
+#endif /* DEBUG */
     if (cpu_cpt < cpus->nb_needed_cpus + 1) {
         printf("Wanted %i threads on numa %i, but found only %i CPUs.\n",
                cpus->nb_needed_cpus + 1, cpus->numacore, cpu_cpt);
@@ -62,7 +68,9 @@ static uint64_t generate_mask(const struct cpus_bindings* cpus, uint8_t number)
     /* generate coremask */
     for (coremask = 0, i = 0; i < number; i++)
         coremask |= (uint64_t)(1 << cpus->cpus_to_use[i]);
+#ifdef DEBUG
     printf("%s for %u cores -> 0x%lx\n", __FUNCTION__, number, coremask);
+#endif /* DEBUG */
     return (coremask);
 }
 
