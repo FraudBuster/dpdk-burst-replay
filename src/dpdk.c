@@ -448,9 +448,16 @@ int start_tx_threads(const struct cmd_opts* opts,
         }
     }
 
-    /* wait for ENTER and starts threads */
-    puts("Threads are ready to be launched, please press ENTER to start sending packets.");
-    for (ret = getchar(); ret != '\n'; ret = getchar()) ;
+    if (opts->wait) {
+        /* wait for ENTER and starts threads */
+        puts("Threads are ready to be launched, please press ENTER to start sending packets.");
+        for (ret = getchar(); ret != '\n'; ret = getchar()) ;
+    } else
+        /*
+          wait 1sec to be sure that threads are spawned and ready to start
+          simultaneously (for stats concerns)
+        */
+        sleep (1);
     for (i = 0; i < cpus->nb_needed_cpus; i++) {
         ret = sem_post(&sem);
         if (ret) {

@@ -22,6 +22,8 @@ void usage(void)
          "Options:\n"
          "--numacore numacore : use cores only if it fits the wanted numa.\n"
          "--nbruns X : set the wanted number of replay (1 by default). Set to 0 to infinite mode.\n"
+         "--wait-enter: will wait until you press ENTER to start the replay "
+         " (asked once all the initialization are done)"
          /* TODO: */
          /* "[--maxbitrate bitrate]|[--normalspeed] : bitrate not to be exceeded (default: no limit) in ko/s.\n" */
          /* "  specify --normalspeed to replay the trace with the good timings." */
@@ -119,6 +121,13 @@ int parse_options(const int ac, char** av, struct cmd_opts* opts)
             i++;
             continue;
         }
+
+        /* --wait-enter */
+        if (!strcmp(av[i], "--wait-enter")) {
+            opts->wait = 1;
+            continue;
+        }
+
         break;
     }
     if (i + 2 > ac)

@@ -33,6 +33,7 @@ struct cmd_opts {
     int             numacore;
     int             nbruns;
     unsigned int    maxbitrate;
+    int             wait;
     char*           trace;
 };
 
