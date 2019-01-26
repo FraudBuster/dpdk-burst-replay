@@ -34,6 +34,7 @@ struct cmd_opts {
     int             nbruns;
     unsigned int    maxbitrate;
     int             wait;
+    int             topspeed;
     char*           trace;
 };
 

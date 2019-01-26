@@ -24,6 +24,7 @@ void usage(void)
          "--nbruns X : set the wanted number of replay (1 by default). Set to 0 to infinite mode.\n"
          "--wait-enter: will wait until you press ENTER to start the replay "
          " (asked once all the initialization are done)"
+         "--topspeed: pcap will be replayed at maximum hardware speed."
          /* TODO: */
          /* "[--maxbitrate bitrate]|[--normalspeed] : bitrate not to be exceeded (default: no limit) in ko/s.\n" */
          /* "  specify --normalspeed to replay the trace with the good timings." */
@@ -125,6 +126,12 @@ int parse_options(const int ac, char** av, struct cmd_opts* opts)
         /* --wait-enter */
         if (!strcmp(av[i], "--wait-enter")) {
             opts->wait = 1;
+            continue;
+        }
+
+        /* --topspeed */
+        if (!strcmp(av[i], "--topspeed")) {
+            opts->topspeed = 1;
             continue;
         }
 
