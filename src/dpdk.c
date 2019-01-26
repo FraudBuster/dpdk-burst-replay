@@ -374,10 +374,10 @@ int tx_thread(void* thread_ctx)
     struct thread_ctx*  ctx;
     struct rte_mbuf**   mbuf;
     struct timespec     start, end;
-    unsigned int        tx_queue;
-    int                 ret, thread_id, index, i, run_cpt, retry_tx;
-    int                 nb_sent, to_sent, total_to_sent, total_sent;
+    unsigned int        tx_queue, i;
+    int                 ret, thread_id, run_cpt;
     int                 nb_drop;
+    uint32_t            us_to_wait;
 
     if (!thread_ctx)
         return (EINVAL);
@@ -410,33 +410,29 @@ int tx_thread(void* thread_ctx)
     for (run_cpt = ctx->nbruns, tx_queue = ctx->total_drop = ctx->total_drop_sz = 0;
          run_cpt;
          ctx->total_drop += nb_drop, run_cpt--) {
-        /* iterate on pkts for every batch of BURST_SZ number of packets */
-        for (total_to_sent = ctx->nb_pkt, nb_drop = 0, to_sent = min(BURST_SZ, total_to_sent);
-             to_sent;
-             total_to_sent -= to_sent, to_sent = min(BURST_SZ, total_to_sent)) {
-            /* calculate the mbuf index for the current batch */
-            index = ctx->nb_pkt - total_to_sent;
-
-            /* send the burst batch, and retry NB_RETRY_TX times if we */
-            /* didn't success to sent all the wanted batch */
-            for (total_sent = 0, retry_tx = NB_RETRY_TX;
-                 total_sent < to_sent && retry_tx;
-                 total_sent += nb_sent, retry_tx--) {
-                nb_sent = rte_eth_tx_burst(ctx->tx_port_id,
-                                           (tx_queue++ % NB_TX_QUEUES),
-                                           &(mbuf[index + total_sent]),
-                                           to_sent - total_sent);
-                if (retry_tx != NB_RETRY_TX &&
-                    tx_queue % NB_TX_QUEUES == 0)
-                    usleep(100);
-            }
-            /* free unseccessfully sent  */
-            if (unlikely(!retry_tx))
-                for (i = total_sent; i < to_sent; i++) {
-                    nb_drop++;
-                    ctx->total_drop_sz += mbuf[index + i]->pkt_len;
-                    rte_pktmbuf_free(mbuf[index + i]);
+        /* iterate on pkts */
+        for (i = nb_drop = 0; i < ctx->nb_pkt; i++) {
+            /* wait the needed time before sending the next pkt */
+            if (likely(i)) { /* do there is no timestamp to wait on the first packet */
+                /* calculate the number of microsec to wait */
+                if (ctx->pkts_ts[i].usec >= ctx->pkts_ts[i - 1].usec) {
+                    us_to_wait = ctx->pkts_ts[i].usec - ctx->pkts_ts[i - 1].usec;
+                    us_to_wait += (ctx->pkts_ts[i].sec - ctx->pkts_ts[i - 1].sec) * 1000000;
+                } else {
+                    us_to_wait = 1000000 - ctx->pkts_ts[i - 1].usec + ctx->pkts_ts[i].usec;
+                    us_to_wait += (ctx->pkts_ts[i].sec - ctx->pkts_ts[i - 1].sec - 1) * 1000000;
                 }
+                usleep(us_to_wait);
+            }
+
+            /* send the packet */
+            ret = rte_eth_tx_burst(ctx->tx_port_id, (tx_queue++ % NB_TX_QUEUES),
+                                   &(mbuf[i]), 1);
+            if (unlikely(ret == 0)) {
+                nb_drop++;
+                ctx->total_drop_sz += mbuf[i]->pkt_len;
+                rte_pktmbuf_free(mbuf[i]);
+            }
         }
 #ifdef DEBUG
         if (unlikely(nb_drop))
