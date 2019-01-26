@@ -55,6 +55,12 @@ struct                  pcap_cache {
     struct rte_mbuf**   mbufs;
 };
 
+/* timestamp of packets */
+struct pcap_pkt_ts {
+    uint32_t sec;         /* timestamp seconds */
+    uint32_t usec;        /* timestamp microseconds */
+};
+
 /* struct to store dpdk context */
 struct                  dpdk_ctx {
     unsigned long       nb_mbuf; /* number of needed mbuf (see main.c) */
@@ -65,6 +71,7 @@ struct                  dpdk_ctx {
     /* pcap file caches */
     long int            pcap_sz; /* size of the capture */
     struct pcap_cache*  pcap_caches; /* tab of caches, one per NIC port */
+    struct pcap_pkt_ts* pkts_ts; /* timestamps of packets */
 };
 
 /* struct to store threads context */

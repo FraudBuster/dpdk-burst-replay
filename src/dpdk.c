@@ -487,6 +487,10 @@ void dpdk_cleanup(struct dpdk_ctx* dpdk, struct cpus_bindings* cpus)
         free(dpdk->pcap_caches);
     }
 
+    /* free the timestamps cache */
+    if (dpdk->pkts_ts)
+        free(dpdk->pkts_ts);
+
     /* close ethernet devices */
     for (i = 0; i < cpus->nb_needed_cpus; i++)
         rte_eth_dev_close(i);

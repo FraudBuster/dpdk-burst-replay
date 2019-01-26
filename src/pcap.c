@@ -224,6 +224,13 @@ int load_pcap(const struct cmd_opts* opts, struct pcap_ctx* pcap,
         bzero(dpdk->pcap_caches[i].mbufs,
               sizeof(*(dpdk->pcap_caches[i].mbufs)) * pcap->nb_pkts);
     }
+    /* alloc needed tab of timestamps */
+    dpdk->pkts_ts = malloc(sizeof(*(dpdk->pkts_ts)) * pcap->nb_pkts);
+    if (dpdk->pkts_ts == NULL) {
+        fprintf(stderr, "%s: malloc of pkt_ts failed.\n", __FUNCTION__);
+        return (ENOMEM);
+    }
+    bzero(dpdk->pkts_ts, sizeof(*(dpdk->pkts_ts)) * pcap->nb_pkts);
 
     /* seek again to the beginning */
     if (lseek(pcap->fd, 0, SEEK_SET) == (off_t)(-1)) {
@@ -275,6 +282,8 @@ int load_pcap(const struct cmd_opts* opts, struct pcap_ctx* pcap,
                 goto load_pcapError;
             }
         }
+        dpdk->pkts_ts[cpt].sec = pcap_rechdr.ts_sec;
+        dpdk->pkts_ts[cpt].usec = pcap_rechdr.ts_usec;
 
         /* calcul & print progression every 1024 pkts */
         if ((cpt % 1024) == 0) {
