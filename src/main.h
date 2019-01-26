@@ -87,6 +87,7 @@ struct                  thread_ctx {
     unsigned int        total_drop;
     unsigned int        total_drop_sz;
     struct pcap_cache*  pcap_cache;
+    struct pcap_pkt_ts* pkts_ts;
 };
 
 struct                  pcap_ctx {
