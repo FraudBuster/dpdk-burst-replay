@@ -22,11 +22,16 @@ void usage(void)
          "Options:\n"
          "--numacore numacore : use cores only if it fits the wanted numa.\n"
          "--nbruns X : set the wanted number of replay (1 by default). Set to 0 to infinite mode.\n"
-         "--wait-enter: will wait until you press ENTER to start the replay "
-         " (asked once all the initialization are done)"
+         "--wait-enter: will wait until you press ENTER to start the replay (asked \n"
+         "  once all the initialization are done)"
          /* TODO: */
          /* "[--maxbitrate bitrate]|[--normalspeed] : bitrate not to be exceeded (default: no limit) in ko/s.\n" */
          /* "  specify --normalspeed to replay the trace with the good timings." */
+         "\n/!\\ Dirty and temporary hack option:\n"
+         "--increase-hugepages-nb NB: will increase the amount of hugepages to be\n"
+         "  used by the application to cache packets. Can be used if you got an \n"
+         "  \"RTE Mempool creation failed\" error. 3 should be enough. /!\\ Temporary \n"
+         "  option. Will be deleted once it will no longer be needed"
         );
     return ;
 }
@@ -114,9 +119,20 @@ int parse_options(const int ac, char** av, struct cmd_opts* opts)
             /* if no nb runs is specified */
             if (i + 1 >= ac - 2)
                 return (ENOENT);
-
             opts->nbruns = atoi(av[i + 1]);
             if (opts->nbruns < 0)
+                return (EPROTO);
+            i++;
+            continue;
+        }
+
+        /* --increase-hugepages-nb nb */
+        if (!strcmp(av[i], "--increase-hugepages-nb")) {
+            /* if no nb is specified */
+            if (i + 1 >= ac - 2)
+                return (ENOENT);
+            opts->increase_hugepages_nb = atoi(av[i + 1]);
+            if (opts->increase_hugepages_nb < 0)
                 return (EPROTO);
             i++;
             continue;
@@ -188,6 +204,7 @@ int check_needed_memory(const struct cmd_opts* opts, const struct pcap_ctx* pcap
         dpdk->pool_sz = needed_mem / (float)(1024*1024*1024) + 1;
     else
         dpdk->pool_sz = needed_mem / (1024*1024*1024);
+    dpdk->pool_sz += opts->increase_hugepages_nb;
     printf("-> Needed Hugepages of 1 Go = %lu\n", dpdk->pool_sz);
     return (0);
 }

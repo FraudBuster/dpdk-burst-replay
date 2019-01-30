@@ -172,40 +172,6 @@ int dpdk_init_port(const struct cpus_bindings* cpus, int port)
     return (0);
 }
 
-int find_max_mempool_size(const struct cpus_bindings* cpus, struct dpdk_ctx* dpdk)
-{
-    unsigned int nb_pkts = dpdk->nb_mbuf / 2;;
-    unsigned int last_success = 0;
-    unsigned int last_failed = dpdk->nb_mbuf;
-
-    while (42) {
-        dpdk->pktmbuf_pool = rte_mempool_create("dpdk_replay_mempool",
-                                                nb_pkts,
-                                                dpdk->mbuf_sz,
-                                                MBUF_CACHE_SZ,
-                                                sizeof(struct rte_pktmbuf_pool_private),
-                                                rte_pktmbuf_pool_init, NULL,
-                                                rte_pktmbuf_init, NULL,
-                                                cpus->numacore,
-                                                0);
-        if (dpdk->pktmbuf_pool == NULL) {
-            fprintf(stderr, "mempool creation of %u mbufs failed\n", nb_pkts);
-            last_failed = nb_pkts;
-            if (last_success)
-                nb_pkts = (last_failed + last_success) / 2;
-            else
-                nb_pkts /= 2;
-        } else {
-            fprintf(stderr, "mempool creation of %u mbufs SUCCESS :)\n", nb_pkts);
-            rte_mempool_free(dpdk->pktmbuf_pool);
-            last_success = nb_pkts;
-            nb_pkts = (last_failed + last_success) / 2;
-        }
-    }
-    return (0);
-}
-
-
 int init_dpdk_eal_mempool(const struct cmd_opts* opts,
                           const struct cpus_bindings* cpus,
                           struct dpdk_ctx* dpdk)
@@ -219,7 +185,6 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
         return (EINVAL);
 
     rte_log_set_global_level(RTE_LOG_ERR);
-    /* rte_log_set_global_level(RTE_LOG_DEBUG); */
 
     /* craft an eal arg list */
     eal_args = fill_eal_args(opts, cpus, dpdk, &eal_args_ac);
@@ -269,7 +234,6 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
                                             0);
     if (dpdk->pktmbuf_pool == NULL) {
         fprintf(stderr, "DPDK: RTE Mempool creation failed\n");
-        find_max_mempool_size(cpus, dpdk);
         return (1);
     }
     return (0);
