@@ -177,6 +177,7 @@ int check_needed_memory(const struct cmd_opts* opts, const struct pcap_ctx* pcap
     printf("-> Needed MBUF size: %lu\n", dpdk->mbuf_sz);
 
     /* # CALCULATE THE NEEDED NUMBER OF MBUFS */
+#ifdef DPDK_RECOMMANDATIONS
     /* For number of pkts to be allocated on the mempool, DPDK says: */
     /* The optimum size (in terms of memory usage) for a mempool is when n is a
        power of two minus one: n = (2^q - 1).  */
@@ -185,6 +186,14 @@ int check_needed_memory(const struct cmd_opts* opts, const struct pcap_ctx* pcap
          "(nb pkts * nb ports)");
 #endif /* DEBUG */
     dpdk->nb_mbuf = get_next_power_of_2(pcap->nb_pkts * opts->nb_pcicards) - 1;
+#else /* !DPDK_RECOMMANDATIONS */
+    /*
+      Some tests shown that the perf are not so much impacted when allocating the
+      exact number of wanted mbufs. I keep it simple for now to reduce the needed
+      memory on large pcap.
+    */
+    dpdk->nb_mbuf = pcap->nb_pkts * opts->nb_pcicards;
+#endif /* DPDK_RECOMMANDATIONS */
     printf("-> Needed number of MBUFS: %lu\n", dpdk->nb_mbuf);
 
     /* # CALCULATE THE TOTAL NEEDED MEMORY SIZE  */
