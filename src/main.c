@@ -20,10 +20,11 @@ void usage(void)
          "pcap_file: the file to send through the DPDK ports.\n"
          "port1[,portx...] : specify the list of ports to be used (pci addresses).\n"
          "Options:\n"
-         "--numacore numacore : use cores only if it fits the wanted numa.\n"
+         "--numacore numacore : select the wanted numa core you want to use. Only\n"
+         "  NICs on the selected numa core will be available (default: numa core 0).\n"
          "--nbruns X : set the wanted number of replay (1 by default). Set to 0 to infinite mode.\n"
-         "--wait-enter: will wait until you press ENTER to start the replay "
-         " (asked once all the initialization are done)"
+         "--wait-enter: will wait until you press ENTER to start the replay (asked\n"
+         "  once all the initialization are done)"
          /* TODO: */
          /* "[--maxbitrate bitrate]|[--normalspeed] : bitrate not to be exceeded (default: no limit) in ko/s.\n" */
          /* "  specify --normalspeed to replay the trace with the good timings." */
