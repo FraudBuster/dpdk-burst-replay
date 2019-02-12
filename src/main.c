@@ -16,15 +16,15 @@
 
 void usage(void)
 {
-    puts("dpdk-replay [options] pcap_file port1[,portx...]\n"
-         "pcap_file: the file to send through the DPDK ports.\n"
-         "port1[,portx...] : specify the list of ports to be used (pci addresses).\n"
+    puts("dpdk-replay [OPTIONS] PCAP_FILE PORT1[,PORTX...]\n"
+         "PCAP_FILE: the file to send through the DPDK ports.\n"
+         "PORT1[,PORTX...] : specify the list of ports to be used (pci addresses).\n"
          "Options:\n"
-         "--numacore numacore : select the wanted numa core you want to use. Only\n"
-         "  NICs on the selected numa core will be available (default: numa core 0).\n"
-         "--nbruns X : set the wanted number of replay (1 by default). Set to 0 to infinite mode.\n"
+         "--numacore <NUMA-CORE> : use cores from the desired NUMA. Only\n"
+         "  NICs on the selected numa core will be available (default is 0).\n"
+         "--nbruns <1-N> : set the wanted number of replay (1 by default).\n"
          "--wait-enter: will wait until you press ENTER to start the replay (asked\n"
-         "  once all the initialization are done)"
+         "  once all the initialization are done)."
          /* TODO: */
          /* "[--maxbitrate bitrate]|[--normalspeed] : bitrate not to be exceeded (default: no limit) in ko/s.\n" */
          /* "  specify --normalspeed to replay the trace with the good timings." */
@@ -103,7 +103,7 @@ int parse_options(const int ac, char** av, struct cmd_opts* opts)
                 return (ENOENT);
 
             nc = atoi(av[i + 1]);
-            if (nc < 0 || nc > 127)
+            if (nc < 0 || nc > 2)
                 return (ENOENT);
             opts->numacore = (char)nc;
             i++;
@@ -117,7 +117,7 @@ int parse_options(const int ac, char** av, struct cmd_opts* opts)
                 return (ENOENT);
 
             opts->nbruns = atoi(av[i + 1]);
-            if (opts->nbruns < 0)
+            if (opts->nbruns <= 0)
                 return (EPROTO);
             i++;
             continue;
