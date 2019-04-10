@@ -194,6 +194,12 @@ int check_needed_memory(const struct cmd_opts* opts, const struct pcap_ctx* pcap
     */
     dpdk->nb_mbuf = pcap->nb_pkts * opts->nb_pcicards;
 #endif /* DPDK_RECOMMANDATIONS */
+    /*
+      If we have a pcap with very few packets, we need to allocate more mbufs
+      than necessary to avoid rte_mempool_create failure.
+    */
+    if (dpdk->nb_mbuf < (MBUF_CACHE_SZ * 2))
+        dpdk->nb_mbuf = MBUF_CACHE_SZ * 4;
     printf("-> Needed number of MBUFS: %lu\n", dpdk->nb_mbuf);
 
     /* # CALCULATE THE TOTAL NEEDED MEMORY SIZE  */
