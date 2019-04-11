@@ -184,7 +184,13 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
     if (!opts || !cpus || !dpdk)
         return (EINVAL);
 
+    /* API BREAKAGE ON 17.05 */
+#if (defined RTE_VER_YEAR && RTE_VER_YEAR == 17 && defined RTE_VER_MONTH && RTE_VER_MONTH < 05) \
+    || defined RTE_VER_YEAR && RTE_VER_YEAR < 17
+    rte_set_log_level(RTE_LOG_ERR);
+#else /* if DPDK >= 17.05 */
     rte_log_set_global_level(RTE_LOG_ERR);
+#endif
 
     /* craft an eal arg list */
     eal_args = fill_eal_args(opts, cpus, dpdk, &eal_args_ac);
