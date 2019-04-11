@@ -207,9 +207,7 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
     }
 
     /* check that dpdk detects all wanted/needed NIC ports */
-    /* API BREAKAGE ON 18.05 */
-#if (defined RTE_VER_YEAR && RTE_VER_YEAR == 18 && defined RTE_VER_MONTH && RTE_VER_MONTH <= 02) \
-    || defined RTE_VER_YEAR && RTE_VER_YEAR < 18
+#if API_OLDEST_THAN(18, 05) /* API BREAKAGE ON 18.05 */
     nb_ports = rte_eth_dev_count();
 #else /* if DPDK >= 18.05 */
     nb_ports = rte_eth_dev_count_avail();
