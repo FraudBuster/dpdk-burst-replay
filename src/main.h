@@ -26,6 +26,11 @@
 #define max(x, y) (x > y ? x : y)
 #endif /* max */
 
+#define API_OLDEST_THAN(year, month)                     \
+    ((defined RTE_VER_YEAR && RTE_VER_YEAR == year       \
+      && defined RTE_VER_MONTH && RTE_VER_MONTH < month) \
+     || defined RTE_VER_YEAR && RTE_VER_YEAR < year)
+
 /* struct to store the command line args */
 struct cmd_opts {
     char**          pcicards;

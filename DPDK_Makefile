@@ -21,6 +21,6 @@ SRCS-y 	:=	src/main.c \
 			src/pcap.c \
 			src/utils.c
 
-LDFLAGS	+=	-lpcap -lm -lnuma
+LDFLAGS	+=	-lm -lnuma
 
 include $(RTE_SDK)/mk/rte.extapp.mk

@@ -59,6 +59,8 @@ TODO
 * Be able to send dumps simultaneously on both numacores.
 * Split big pkts into multiple mbufs.
 * Add a Python module to facilitate scripting (something like what does scapy for tcpreplay sendpfast func).
+* Manage systems with more than 2 numa cores.
+* Use the maximum NICs capabilities (Tx queues/descriptors).
 
 BSD LICENCE
 -----------

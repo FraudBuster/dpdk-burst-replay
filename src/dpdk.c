@@ -25,23 +25,11 @@ static struct rte_eth_conf ethconf = {
     .link_duplex = 0,       // autonegociated link mode
 #endif
     .rxmode = {
-        // Multi queue packet routing mode. We wont use DPDK RSS scaling for now,
-        // we will use our own ashkey
         .mq_mode = ETH_MQ_RX_NONE,
-        // Default maximum frame length. Whenever this is > ETHER_MAX_LEN,
-        // jumbo_frame has to be set to 1
-        .max_rx_pkt_len = 9000,
-        .split_hdr_size = 0,        // Disable header split
-        .header_split = 0,          // Disable header split
-        .hw_ip_checksum = 0,        // Disable ip checksum
-        .hw_vlan_filter = 0,        // Disable vlan filtering
-        .jumbo_frame = 1,           // Enable Jumbo frame
-        .hw_strip_crc = 0,          // Disable hardware CRC stripping
     },
 
     .txmode = {
-        .mq_mode = ETH_MQ_TX_NONE,  // Multi queue packet routing mode. We wont use
-        // DPDK RSS scaling for now, we will use our own ashkey
+        .mq_mode = ETH_MQ_TX_NONE,  // Multi queue packet routing mode.
     },
 
     .fdir_conf = {
@@ -184,7 +172,12 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
     if (!opts || !cpus || !dpdk)
         return (EINVAL);
 
+    /* API BREAKAGE ON 17.05 */
+#if API_OLDEST_THAN(17, 05)
+    rte_set_log_level(RTE_LOG_ERR);
+#else /* if DPDK >= 17.05 */
     rte_log_set_global_level(RTE_LOG_ERR);
+#endif
 
     /* craft an eal arg list */
     eal_args = fill_eal_args(opts, cpus, dpdk, &eal_args_ac);
@@ -214,7 +207,11 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
     }
 
     /* check that dpdk detects all wanted/needed NIC ports */
+#if API_OLDEST_THAN(18, 05) /* API BREAKAGE ON 18.05 */
     nb_ports = rte_eth_dev_count();
+#else /* if DPDK >= 18.05 */
+    nb_ports = rte_eth_dev_count_avail();
+#endif
     if (nb_ports != cpus->nb_needed_cpus) {
         printf("%s error: wanted %u NIC ports, found %u\n", __FUNCTION__,
                cpus->nb_needed_cpus, nb_ports);
