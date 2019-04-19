@@ -239,6 +239,7 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
     if (dpdk->pktmbuf_pool == NULL) {
         fprintf(stderr, "DPDK: RTE Mempool creation failed (%s)\n",
                 rte_strerror(rte_errno));
+#if API_AT_LEAST_AS_RECENT_AS(18, 05)
         if (rte_errno == ENOMEM
             && (dpdk->nb_mbuf * dpdk->mbuf_sz /1024/1024) > RTE_MAX_MEM_MB_PER_LIST)
             fprintf(stderr, "Your version of DPDK was configured to use at maximum"
@@ -246,6 +247,7 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
                     "Try to recompile DPDK by setting CONFIG_RTE_MAX_MEM_MB_PER_LIST"
                     " according to your needs.\n", RTE_MAX_MEM_MB_PER_LIST,
                     dpdk->nb_mbuf * dpdk->mbuf_sz /1024/1024);
+#endif /* API_AT_LEAST_AS_RECENT_AS(18, 05) */
         return (rte_errno);
     }
     return (0);
