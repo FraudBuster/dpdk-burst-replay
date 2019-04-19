@@ -62,29 +62,36 @@ char** fill_eal_args(const struct cmd_opts* opts, const struct cpus_bindings* cp
                      const struct dpdk_ctx* dpdk, int* eal_args_ac)
 {
     char    buf_coremask[30];
-    char    socket_mem_arg[32];
     char**  eal_args;
-    int     i, cpt, mempool;
+    int     i, cpt;
+#if API_OLDEST_THAN(18, 05)
+    char    socket_mem_arg[32];
+    int     mempool;
+#endif /* API_OLDEST_THAN(18, 05) */
 
     if (!opts || !cpus || !dpdk)
         return (NULL);
 
-    mempool = dpdk->pool_sz * 1024;
     /* Set EAL init parameters */
     snprintf(buf_coremask, 20, "0x%lx", cpus->coremask);
+#if API_OLDEST_THAN(18, 05)
+    mempool = dpdk->pool_sz * 1024;
     if (cpus->numacores == 1)
         snprintf(socket_mem_arg, sizeof(socket_mem_arg), "--socket-mem=%i", mempool);
     else if (cpus->numacore == 0)
         snprintf(socket_mem_arg, sizeof(socket_mem_arg), "--socket-mem=%i,0", mempool);
     else
         snprintf(socket_mem_arg, sizeof(socket_mem_arg), "--socket-mem=0,%i", mempool);
+#endif /* API_OLDEST_THAN(18, 05) */
     char *pre_eal_args[] = {
         "./dpdk-replay",
         "-c", strdup(buf_coremask),
         "-n", "1", /* NUM MEM CHANNELS */
         "--proc-type", "auto",
         "--file-prefix", "dpdkreplay_",
+#if API_OLDEST_THAN(18, 11)
         strdup(socket_mem_arg),
+#endif /* API_OLDEST_THAN(18, 11) */
         NULL
     };
     /* fill pci whitelist args */
@@ -230,8 +237,16 @@ int init_dpdk_eal_mempool(const struct cmd_opts* opts,
                                             cpus->numacore,
                                             0);
     if (dpdk->pktmbuf_pool == NULL) {
-        fprintf(stderr, "DPDK: RTE Mempool creation failed\n");
-        return (1);
+        fprintf(stderr, "DPDK: RTE Mempool creation failed (%s)\n",
+                rte_strerror(rte_errno));
+        if (rte_errno == ENOMEM
+            && (dpdk->nb_mbuf * dpdk->mbuf_sz /1024/1024) > RTE_MAX_MEM_MB_PER_LIST)
+            fprintf(stderr, "Your version of DPDK was configured to use at maximum"
+                    " %u Mo, or you try to allocate ~%lu Mo.\n"
+                    "Try to recompile DPDK by setting CONFIG_RTE_MAX_MEM_MB_PER_LIST"
+                    " according to your needs.\n", RTE_MAX_MEM_MB_PER_LIST,
+                    dpdk->nb_mbuf * dpdk->mbuf_sz /1024/1024);
+        return (rte_errno);
     }
     return (0);
 }
