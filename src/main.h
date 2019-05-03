@@ -45,7 +45,6 @@ struct cmd_opts {
     unsigned int    maxbitrate;
     int             wait;
     char*           trace;
-    int             increase_hugepages_nb;
 };
 
 /* struct to store the cpus context */
