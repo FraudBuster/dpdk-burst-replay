@@ -31,6 +31,11 @@
       && defined RTE_VER_MONTH && RTE_VER_MONTH < month) \
      || defined RTE_VER_YEAR && RTE_VER_YEAR < year)
 
+#define API_AT_LEAST_AS_RECENT_AS(year, month)            \
+    ((defined RTE_VER_YEAR && RTE_VER_YEAR == year        \
+      && defined RTE_VER_MONTH && RTE_VER_MONTH >= month) \
+     || defined RTE_VER_YEAR && RTE_VER_YEAR >= year)
+
 /* struct to store the command line args */
 struct cmd_opts {
     char**          pcicards;
