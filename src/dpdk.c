@@ -12,6 +12,7 @@
 #include <rte_version.h>
 #include <rte_ethdev.h>
 #include <rte_log.h>
+#include <rte_errno.h>
 
 #include "main.h"
 
