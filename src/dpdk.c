@@ -65,34 +65,18 @@ char** fill_eal_args(const struct cmd_opts* opts, const struct cpus_bindings* cp
     char    buf_coremask[30];
     char**  eal_args;
     int     i, cpt;
-#if API_OLDEST_THAN(18, 05)
-    char    socket_mem_arg[32];
-    int     mempool;
-#endif /* API_OLDEST_THAN(18, 05) */
 
     if (!opts || !cpus || !dpdk)
         return (NULL);
 
     /* Set EAL init parameters */
     snprintf(buf_coremask, 20, "0x%lx", cpus->coremask);
-#if API_OLDEST_THAN(18, 05)
-    mempool = dpdk->pool_sz * 1024;
-    if (cpus->numacores == 1)
-        snprintf(socket_mem_arg, sizeof(socket_mem_arg), "--socket-mem=%i", mempool);
-    else if (cpus->numacore == 0)
-        snprintf(socket_mem_arg, sizeof(socket_mem_arg), "--socket-mem=%i,0", mempool);
-    else
-        snprintf(socket_mem_arg, sizeof(socket_mem_arg), "--socket-mem=0,%i", mempool);
-#endif /* API_OLDEST_THAN(18, 05) */
     char *pre_eal_args[] = {
         "./dpdk-replay",
         "-c", strdup(buf_coremask),
         "-n", "1", /* NUM MEM CHANNELS */
         "--proc-type", "auto",
         "--file-prefix", "dpdkreplay_",
-#if API_OLDEST_THAN(18, 11)
-        strdup(socket_mem_arg),
-#endif /* API_OLDEST_THAN(18, 11) */
         NULL
     };
     /* fill pci whitelist args */
