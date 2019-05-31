@@ -15,6 +15,19 @@ Installing custom DPDK version
 
 TODO
 
+.. _linking_custom_dpdk_version:
+
+Linking custom DPDK version
+---------------------------
+
+TODO
+
+
+..  Using a static makefile with DPDK's env and conf::
+    RTE_SDK=<RTE_SDK_PATH> make -f DPDK_Makefile && sudo cp build/dpdk-replay /usr/bin
+
+
+
 Troubleshooting
 ---------------
 
