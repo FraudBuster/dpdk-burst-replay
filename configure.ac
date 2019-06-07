@@ -12,14 +12,16 @@ AM_INIT_AUTOMAKE([foreign])
 AC_PROG_CC
 AM_PROG_CC_C_O
 
+CFLAGS := ""
+
 # DEBUG
 AC_ARG_ENABLE(debug,
         AS_HELP_STRING([--enable-debug], [turns on debug compiler, default:no]))
 if test x$enable_debug = xyes; then
     AC_DEFINE([DEBUG], [1], [debug enabled])
-    CFLAGS="-ggdb -W -Wall -DDEBUG -O0"
+    CFLAGS+=" -ggdb -W -Wall -DDEBUG -O0"
 else
-    CFLAGS="-W -Wall -DNDEBUG -O2"
+    CFLAGS+=" -W -Wall -DNDEBUG -O2"
 fi
 
 AC_CONFIG_FILES([Makefile
