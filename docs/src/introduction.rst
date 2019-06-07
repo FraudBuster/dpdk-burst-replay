@@ -16,10 +16,9 @@ The tool usage tend to looks like tcpreplay in term of simplicity. Only two args
 one pcap file and one DPDK port address to replay on:
 
 ::
-   
+
    $> dpdk-replay foo.pcap 04:00.0
 
-   
 What can it do?
 ---------------
 
@@ -32,7 +31,21 @@ What can it do?
 * At the end, some stats are displayed for each ports (time spent, pkts-per-sec, total bitrate etc...)
 * Abstract DPDK stack: All EAL/mempool/ports initializations are automatically handled.
 
-  
+.. _dpdk_compatible_versions:
+
+DPDK compatible versions
+------------------------
+
+dpdk-burst-replay releases are compatible with DPDK LTS versions.
+
++----------------------------+---------------------------+
+| dpdk-burst-replay releases | Tested with DPDK versions |
++============================+===========================+
+| v1.1.0                     | 16.11.9/17.11.5/18.11.1   |
++----------------------------+---------------------------+
+
+NB: Other intermediate versions should also works. Last versions can need some adaptation.
+
 Ok, let's start!
 ----------------
 
