@@ -7,6 +7,11 @@ dpdk-burst-replay's documentation
 Contents:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   readme
+   introduction
+   quick-start-guide
+   user-guide
+   how-to-contribute
+   todo-list
+   contact
