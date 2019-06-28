@@ -30,10 +30,10 @@ URL to git clone::
 
 To browse the code online: https://git.dpdk.org/apps/dpdk-burst-replay/
 
-Sending patchs
---------------
+Sending patches
+---------------
 
-To send patches, please follow the `official DPDK guide to contribution <https://www.dpdk.org/contribute/>`_, whith these little differences:
+To send patches, please follow the `official DPDK guide to contribution <https://www.dpdk.org/contribute/>`_, with these little differences:
 
 * Add **[burst-replay PATCH]** to the title (instead of just **[PATCH]**).
 * Add me in CC: jonathan.ribas@fraudbuster.mobi.
